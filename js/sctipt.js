@@ -94,4 +94,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     setClock('.timer', deadline);
+
+    // Modal
+
+    const modalTrigers = document.querySelectorAll('[data-modal]'),
+        closeModalBtn = document.querySelector('[data-close]'),
+        modalWindow = document.querySelector('.modal');
+
+
+    modalTrigers.forEach(triger => {
+        triger.addEventListener('click', (event) => {
+            modalWindow.classList.add('show');
+            modalWindow.classList.remove('hide');
+            document.body.style.overflow = 'hidden';
+
+        });
+    });
+
+    function closeModal() {
+        modalWindow.classList.add('hide');
+        modalWindow.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    closeModalBtn.addEventListener('click', closeModal);
+
+    modalWindow.addEventListener('click', (event) => {
+        if (event.target === modalWindow) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.code === 'Escape' && modalWindow.classList.contains('show')) {
+            console.log('asdasd');
+            closeModal();
+        }
+    });
+
+
 });
