@@ -137,6 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // const modalTimerID = setTimeout(openModal, 10000);
 
+
+
     function showModalByScroll() {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
             openModal();
@@ -215,6 +217,56 @@ document.addEventListener('DOMContentLoaded', () => {
         '.menu .container'
     ).render();
 
+    // Forms
 
+    const forms = document.querySelectorAll('form');
+
+    const massage = {
+        loading: 'Загрузка',
+        success: '  Спасибо! Мы скоро свяжемся с Вами',
+        failure: 'Что-то пошло не так...',
+    };
+
+    forms.forEach(item => {
+        postData(item);
+    });
+
+    function postData(form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const statusMassage = document.createElement('div');
+            statusMassage.classList.add('status');
+            statusMassage.textContent = massage.loading;
+            form.append(statusMassage);
+
+            const requset = new XMLHttpRequest();
+            requset.open('POST', 'server.php');
+
+            requset.setRequestHeader('Content-type', 'application/json');
+            const formData = new FormData(form);
+
+            const object = {};
+            formData.forEach(function (value, key) {
+                object[key] = value;
+            });
+
+            const json = JSON.stringify(object);
+            requset.send(json);
+
+            requset.addEventListener('load', () => {
+                if (requset.status === 200) {
+                    console.log(requset.response);
+                    statusMassage.textContent = massage.success;
+                    form.reset();
+                    setTimeout(() => {
+                        statusMassage.remove();
+                    }, 2000);
+                } else {
+                    statusMassage.textContent = massage.failure;
+                }
+            });
+        });
+    }
 
 });
