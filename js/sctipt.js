@@ -97,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Modal
 
     const modalTrigers = document.querySelectorAll('[data-modal]'),
-        closeModalBtn = document.querySelector('[data-close]'),
         modalWindow = document.querySelector('.modal');
 
 
@@ -114,14 +113,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.overflow = '';
     }
 
-    closeModalBtn.addEventListener('click', closeModal);
-
     modalTrigers.forEach(triger => {
         triger.addEventListener('click', openModal);
     });
 
     modalWindow.addEventListener('click', (event) => {
-        if (event.target === modalWindow) {
+        if (event.target === modalWindow || event.target.getAttribute('data-close') == '') {
             closeModal();
         }
     });
@@ -135,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Updating Modal
 
-    // const modalTimerID = setTimeout(openModal, 10000);
+    const modalTimerID = setTimeout(openModal, 50000);
 
 
 
@@ -222,8 +219,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const forms = document.querySelectorAll('form');
 
     const massage = {
-        loading: 'Загрузка',
-        success: '  Спасибо! Мы скоро свяжемся с Вами',
+        loading: 'img/form/spinner.svg',
+        success: 'Спасибо! Мы скоро свяжемся с Вами',
         failure: 'Что-то пошло не так...',
     };
 
@@ -235,10 +232,14 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const statusMassage = document.createElement('div');
-            statusMassage.classList.add('status');
-            statusMassage.textContent = massage.loading;
-            form.append(statusMassage);
+            const statusMassage = document.createElement('img');
+            statusMassage.src = massage.loading;
+            statusMassage.style.cssText = `
+                display: block;
+                margin: 0 auto;
+            `;
+
+            form.insertAdjacentElement('afterend', statusMassage);
 
             const requset = new XMLHttpRequest();
             requset.open('POST', 'server.php');
@@ -257,16 +258,38 @@ document.addEventListener('DOMContentLoaded', () => {
             requset.addEventListener('load', () => {
                 if (requset.status === 200) {
                     console.log(requset.response);
-                    statusMassage.textContent = massage.success;
+                    showThanksModal(massage.success);
                     form.reset();
-                    setTimeout(() => {
-                        statusMassage.remove();
-                    }, 2000);
+                    statusMassage.remove();
                 } else {
-                    statusMassage.textContent = massage.failure;
+                    showThanksModal(massage.failure);
                 }
             });
         });
+    }
+
+    function showThanksModal(massage) {
+        const pervModalDialog = document.querySelector('.modal__dialog');
+
+        pervModalDialog.classList.add('hide');
+        openModal();
+
+        const thanksModal = document.createElement('div');
+        thanksModal.classList.add('modal__dialog');
+        thanksModal.innerHTML = `
+            <div class="modal__content">
+                    <div data-close class="modal__close">&times;</div>
+                    <div class="modal__title">${massage}</div>
+            </div>
+        `;
+
+        document.querySelector('.modal').append(thanksModal);
+        setTimeout(() => {
+            thanksModal.remove();
+            pervModalDialog.classList.remove('hide');
+            pervModalDialog.classList.add('show');
+            closeModal();
+        }, 4000);
     }
 
 });
