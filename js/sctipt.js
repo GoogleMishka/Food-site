@@ -241,30 +241,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
             form.insertAdjacentElement('afterend', statusMassage);
 
-            const requset = new XMLHttpRequest();
-            requset.open('POST', 'server.php');
-
-            requset.setRequestHeader('Content-type', 'application/json');
             const formData = new FormData(form);
 
             const object = {};
-            formData.forEach(function (value, key) {
+            formData.forEach((value, key) => {
                 object[key] = value;
             });
 
-            const json = JSON.stringify(object);
-            requset.send(json);
-
-            requset.addEventListener('load', () => {
-                if (requset.status === 200) {
-                    console.log(requset.response);
+            fetch('server.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify(object)
+                })
+                .then(data => data.text())
+                .then(data => {
+                    console.log(data);
                     showThanksModal(massage.success);
-                    form.reset();
                     statusMassage.remove();
-                } else {
+                })
+                .catch(() => {
                     showThanksModal(massage.failure);
-                }
-            });
+                })
+                .finally(() => {
+                    form.reset();
+                });
         });
     }
 
