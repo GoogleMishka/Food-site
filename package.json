@@ -16,8 +16,22 @@
     "url": "https://github.com/GoogleMishka/Food-site/issues"
   },
   "homepage": "https://github.com/GoogleMishka/Food-site#readme",
+  "browserslist": [
+    "> 1%"
+  ],
   "devDependencies": {
+    "@babel/cli": "^7.15.4",
+    "@babel/core": "^7.15.5",
+    "@babel/preset-env": "^7.15.4",
     "json-server": "^0.16.3",
     "webpack-cli": "^4.8.0"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "babel-loader": "^8.2.2",
+    "core-js": "^3.17.3",
+    "es6-promise": "^4.2.8",
+    "es6-promise-polyfill": "^1.2.0",
+    "nodelist-foreach-polyfill": "^1.2.0"
   }
 }
